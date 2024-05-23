@@ -311,8 +311,7 @@ local function ProcessTool(item, floor)
 end
 local function ProcessMeseta(item)
     local result = ""
-    result = result .. TextCWrapper(false, lib_items_cfg.mesetaName, "%s ", item.name)
-    result = result .. TextCWrapper(false, lib_items_cfg.mesetaAmount, "%i ", item.meseta)
+    result = result .. "Meseta: "..item.meseta
     return result
 end
 
@@ -355,11 +354,13 @@ local function ProcessItem(item, floor, save, state)
             filename = "saved_inventory.txt"
         end
 
-        currentFile = directory..os.date('%Y%m%d_%H%M%S')..filename
+        currentFile = directory..filename
         local file = io.open(currentFile, "a")
         io.output(file)
         io.write(itemStr .. "\n")
         io.close(file)
+    else
+        return itemStr
     end
 end
 

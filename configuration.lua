@@ -52,6 +52,11 @@ local function ConfigurationWindow(configuration, customTheme)
 			this.changed = true
 		end
 
+        success, _configuration.updateThrottle = imgui.InputInt("Update Throttle", _configuration.updateThrottle)
+		if success then
+			this.changed = true
+		end
+
 		imgui.Text("\nPosition and Size")
 		imgui.PushItemWidth(100)
 		success, _configuration.X = imgui.InputInt("X", _configuration.X)

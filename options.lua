@@ -14,4 +14,5 @@ return {
   Height = 1000,
   Changed = false,
   HighContrast = false,
+  updateThrottle = 1,
 }
