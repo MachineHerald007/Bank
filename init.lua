@@ -67,31 +67,30 @@ local inventoryFilePath = "addons/Bank Connector/inventory/saved_inventory.txt"
 
 local _PlayerArray = 0x00A94254
 local _PlayerIndex = 0x00A9C4F4
-local _SideMessage = pso.base_address + 0x006AECC8
 
 local function SaveOptions(options)
 	local file = io.open(optionsFileName, "w")
 	if file ~= nil then
 		io.output(file)
 
-		io.write("return {\n")
-		io.write(string.format("  configurationEnableWindow = %s,\n", tostring(options.configurationEnableWindow)))
-		io.write(string.format("  enable = %s,\n", tostring(options.enable)))
-		io.write("\n")
-		io.write(string.format("  EnableWindow = %s,\n", tostring(options.EnableWindow)))
-		io.write(string.format("  useCustomTheme = %s,\n", tostring(options.useCustomTheme)))
-		io.write(string.format("  NoTitleBar = \"%s\",\n", options.NoTitleBar))
-		io.write(string.format("  NoResize = \"%s\",\n", options.NoResize))
-		io.write(string.format("  Transparent = %s,\n", tostring(options.Transparent)))
-		io.write(string.format("  fontScale = %s,\n", tostring(options.fontScale)))
-		io.write(string.format("  X = %s,\n", tostring(options.X)))
-		io.write(string.format("  Y = %s,\n", tostring(options.Y)))
-		io.write(string.format("  Width = %s,\n", tostring(options.Width)))
-		io.write(string.format("  Height = %s,\n", tostring(options.Height)))
-		io.write(string.format("  Changed = %s,\n", tostring(options.Changed)))
-		io.write(string.format("  HighContrast = %s,\n", tostring(options.HighContrast)))
+        io.write("return {\n")
+        io.write(string.format("  configurationEnableWindow = %s,\n", tostring(options.configurationEnableWindow)))
+        io.write(string.format("  enable = %s,\n", tostring(options.enable)))
+        io.write("\n")
+        io.write(string.format("  EnableWindow = %s,\n", tostring(options.EnableWindow)))
+        io.write(string.format("  useCustomTheme = %s,\n", tostring(options.useCustomTheme)))
+        io.write(string.format("  NoTitleBar = \"%s\",\n", options.NoTitleBar))
+        io.write(string.format("  NoResize = \"%s\",\n", options.NoResize))
+        io.write(string.format("  Transparent = %s,\n", tostring(options.Transparent)))
+        io.write(string.format("  fontScale = %s,\n", tostring(options.fontScale)))
+        io.write(string.format("  X = %s,\n", tostring(options.X)))
+        io.write(string.format("  Y = %s,\n", tostring(options.Y)))
+        io.write(string.format("  Width = %s,\n", tostring(options.Width)))
+        io.write(string.format("  Height = %s,\n", tostring(options.Height)))
+        io.write(string.format("  Changed = %s,\n", tostring(options.Changed)))
+        io.write(string.format("  HighContrast = %s,\n", tostring(options.HighContrast)))
         io.write(string.format("  updateThrottle = %s,\n", tostring(options.updateThrottle)))
-		io.write("}\n")
+        io.write("}\n")
 
 		io.close(file)
 	end
@@ -217,15 +216,15 @@ local function ConnectBank(save)
 end
 
 function ConnectAddon()
-	local playerIndex = pso.read_u32(_PlayerIndex)
-	local playerAddr = pso.read_u32(_PlayerArray + 4 * playerIndex)
+    local playerIndex = pso.read_u32(_PlayerIndex)
+    local playerAddr = pso.read_u32(_PlayerArray + 4 * playerIndex)
     local save = false
-    
-	if playerAddr ~= 0 then
+
+    if playerAddr ~= 0 then
         ConnectInventory(save, lib_items.Me)
         ConnectBank(save)
-	else
-	end
+    else
+    end
 end
 
 -- config setup and drawing
