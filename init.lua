@@ -19,35 +19,11 @@ local ConfigurationWindow
 if optionsLoaded then
 	options.configurationEnableWindow = options.configurationEnableWindow == nil and true or options.configurationEnableWindow
 	options.enable = options.enable == nil and true or options.enable
-	options.EnableWindow = options.EnableWindow == nil and true or options.EnableWindow
-	options.useCustomTheme = options.useCustomTheme == nil and false or options.useCustomTheme
-	options.NoTitleBar = options.NoTitleBar or ""
-	options.NoResize = options.NoResize or ""
-	options.Transparent = options.Transparent == nil and false or options.Transparent
-	options.fontScale = options.fontScale or 1.0
-	options.X = options.X or 100
-	options.Y = options.Y or 100
-	options.Width = options.Width or 150
-	options.Height = options.Height or 80
-	options.Changed = options.Changed or false
-	options.HighContrast = options.HighContrast == nil and false or options.HighContrast
 	options.updateThrottle = lib_helpers.NotNilOrDefault(options.updateThrottle, 0)
 else
 	options = {
 		configurationEnableWindow = true,
 		enable = true,
-		EnableWindow = true,
-		useCustomTheme = false,
-		NoTitleBar = "",
-		NoResize = "",
-		Transparent = false,
-		fontScale = 1.0,
-		X = 100,
-		Y = 100,
-		Width = 150,
-		Height = 80,
-		Changed = false,
-		HighContrast = false,
 		updateThrottle = 0
 	}
 end
@@ -76,19 +52,6 @@ local function SaveOptions(options)
         io.write("return {\n")
         io.write(string.format("  configurationEnableWindow = %s,\n", tostring(options.configurationEnableWindow)))
         io.write(string.format("  enable = %s,\n", tostring(options.enable)))
-        io.write("\n")
-        io.write(string.format("  EnableWindow = %s,\n", tostring(options.EnableWindow)))
-        io.write(string.format("  useCustomTheme = %s,\n", tostring(options.useCustomTheme)))
-        io.write(string.format("  NoTitleBar = \"%s\",\n", options.NoTitleBar))
-        io.write(string.format("  NoResize = \"%s\",\n", options.NoResize))
-        io.write(string.format("  Transparent = %s,\n", tostring(options.Transparent)))
-        io.write(string.format("  fontScale = %s,\n", tostring(options.fontScale)))
-        io.write(string.format("  X = %s,\n", tostring(options.X)))
-        io.write(string.format("  Y = %s,\n", tostring(options.Y)))
-        io.write(string.format("  Width = %s,\n", tostring(options.Width)))
-        io.write(string.format("  Height = %s,\n", tostring(options.Height)))
-        io.write(string.format("  Changed = %s,\n", tostring(options.Changed)))
-        io.write(string.format("  HighContrast = %s,\n", tostring(options.HighContrast)))
         io.write(string.format("  updateThrottle = %s,\n", tostring(options.updateThrottle)))
         io.write("}\n")
 
@@ -245,37 +208,8 @@ local function present()
 
 	if options.enable == false then
 		return
-	end
-
-	if lib_theme_loaded and options.useCustomTheme then
-		lib_theme.Push()
-	end
-
-	if options.Transparent == true then
-		imgui.PushStyleColor("WindowBg", 0.0, 0.0, 0.0, 0.0)
-	end
-
-	if options.EnableWindow then
-		if firstPresent or options.Changed then
-			options.Changed = false
-
-			imgui.SetNextWindowPos(options.X, options.Y, "Always")
-			imgui.SetNextWindowSize(options.Width, options.Height, "Always");
-		end
-
-		if imgui.Begin("Bank Connector Viewer", nil, { options.NoTitleBar, options.NoResize }) then
-			imgui.SetWindowFontScale(options.fontScale)
-			ConnectAddon()
-		end
-		imgui.End()
-	end
-
-	if options.Transparent == true then
-		imgui.PopStyleColor()
-	end
-
-	if lib_theme_loaded and options.useCustomTheme then
-		lib_theme.Pop()
+    else
+        ConnectAddon()
 	end
 
 	if firstPresent then
@@ -284,17 +218,13 @@ local function present()
 end
 
 local function init()
-	ConfigurationWindow = cfg.ConfigurationWindow(options, lib_theme_loaded)
+	ConfigurationWindow = cfg.ConfigurationWindow(options)
 
 	local function mainMenuButtonHandler()
 		ConfigurationWindow.open = not ConfigurationWindow.open
 	end
 
 	core_mainmenu.add_button("Bank Connector", mainMenuButtonHandler)
-
-	if lib_theme_loaded == false then
-		print("Bank Connector : lib_theme couldn't be loaded")
-	end
 
 	return {
 		name = "Bank Connector",
