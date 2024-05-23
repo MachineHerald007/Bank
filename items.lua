@@ -27,7 +27,6 @@ end
 
 local function writeArmorStats(item, floor)
     local result = ""
-
     result = result .. "["
 
     local statColor
@@ -65,8 +64,6 @@ end
 
 local function ProcessWeapon(item, floor)
     local result = ""
-    local nameColor = lib_items_cfg.weaponName
-    local item_cfg = lib_items_list.t[item.hex]
 
     if item.equipped then
         result = result .. "["
@@ -160,8 +157,6 @@ end
 
 local function ProcessFrame(item, floor)
     local result = ""
-    local nameColor = lib_items_cfg.armorName
-    local item_cfg = lib_items_list.t[item.hex]
 
     if item.equipped then
         result = result .. "["
@@ -179,8 +174,6 @@ local function ProcessFrame(item, floor)
 end
 local function ProcessBarrier(item, floor)
     local result = ""
-    local nameColor = lib_items_cfg.armorName
-    local item_cfg = lib_items_list.t[item.hex]
 
     if item.equipped then
         result = result .. "["
@@ -195,8 +188,6 @@ local function ProcessBarrier(item, floor)
 end
 local function ProcessUnit(item, floor)
     local result = ""
-    local nameColor = lib_items_cfg.unitName
-    local item_cfg = lib_items_list.t[item.hex]
 
     if item.equipped then
         result = result .. "["
@@ -229,8 +220,6 @@ local function ProcessUnit(item, floor)
 end
 local function ProcessMag(item, fromMagWindow)
     local result = ""
-    local nameColor = lib_items_cfg.magName
-    local item_cfg = lib_items_list.t[item.hex]
     
     result = result .. TrimString(item.name, 0) .. " "
     
@@ -260,18 +249,6 @@ local function ProcessMag(item, fromMagWindow)
 end
 local function ProcessTool(item, floor)
     local result = ""
-    local nameColor
-    local item_cfg = lib_items_list.t[item.hex]
-
-    if item.data[2] == 2 then
-        nameColor = lib_items_cfg.techName
-    else
-        nameColor = lib_items_cfg.toolName
-    end
-
-    if item_cfg ~= nil and item_cfg[1] ~= 0 then
-        nameColor = item_cfg[1]
-    end
 
     if item.data[2] == 2 then
         result = result .. TrimString(item.name, 0) .. " "
