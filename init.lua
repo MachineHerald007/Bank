@@ -45,9 +45,9 @@ local _PlayerArray = 0x00A94254
 local _PlayerIndex = 0x00A9C4F4
 
 local function SaveOptions(options)
-	local file = io.open(optionsFileName, "w")
-	if file ~= nil then
-		io.output(file)
+    local file = io.open(optionsFileName, "w")
+    if file ~= nil then
+        io.output(file)
 
         io.write("return {\n")
         io.write(string.format("  configurationEnableWindow = %s,\n", tostring(options.configurationEnableWindow)))
@@ -55,8 +55,8 @@ local function SaveOptions(options)
         io.write(string.format("  updateThrottle = %s,\n", tostring(options.updateThrottle)))
         io.write("}\n")
 
-		io.close(file)
-	end
+        io.close(file)
+    end
 end
 
 function readFileToTable(file_path)
@@ -116,7 +116,6 @@ local function ConnectInventory(save, index)
             cachedInventoryStr = cachedInventoryStr..items.ProcessItem(cache_inventory.items[i], false, false, "Inventory").."\n"
         end
         cachedInventoryStr =  cachedInventoryStr.. "Meseta: "..cache_inventory.meseta.."\n"
-
         if cachedInventoryStr ~= savedInventoryStr then
             print("updating inventory file")
             local file = io.open("addons/Bank Connector/inventory/saved_inventory.txt", "w+")
@@ -164,9 +163,6 @@ local function ConnectBank(save)
             cachedBankStr = cachedBankStr..items.ProcessItem(cache_bank.items[i], false, false, "Bank").."\n"
         end
         cachedBankStr =  cachedBankStr.. "Meseta: "..cache_bank.meseta.."\n"
-        
-        -- now compare saved_bank_file to cache_bank
-        -- if cache_bank has updates, rewrite the file and reinitialize saved_bank_file
         if cachedBankStr ~= savedBankStr then
             print("updating bank file")
             local file = io.open("addons/Bank Connector/bank/saved_bank.txt", "w+")
