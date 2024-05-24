@@ -81,7 +81,7 @@ function ReadFileToTable(file_path)
     return table
 end
 
-local function ConnectInventory(save, index)
+local function ConnectInventory(index)
     index = index or lib_items.Me
     if current_time > last_bank_time + update_delay or last_inventory_index ~= index or cache_inventory == nil then
         cache_inventory = lib_items.GetInventory(index)
@@ -130,7 +130,7 @@ local function ConnectInventory(save, index)
     end
 end
 
-local function ConnectBank(save)
+local function ConnectBank()
     if  current_time > last_bank_time + update_delay or cache_bank == nil then
         cache_bank = lib_items.GetBank()
         last_bank_time = current_time
@@ -180,11 +180,10 @@ end
 function ConnectAddon()
     local playerIndex = pso.read_u32(_PlayerIndex)
     local playerAddr = pso.read_u32(_PlayerArray + 4 * playerIndex)
-    local save = false
 
     if playerAddr ~= 0 and lib_characters.GetCurrentFloorSelf() ~= lobby then
-        ConnectInventory(save, lib_items.Me)
-        ConnectBank(save)
+        ConnectInventory(lib_items.Me)
+        ConnectBank()
     end
 end
 
