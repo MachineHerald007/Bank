@@ -85,8 +85,8 @@ local function ProcessWeapon(item, floor)
 
     if item.weapon.isSRank then
         result = result .. "S-RANK "
-        result = result .. item.name
-        result = result .. item.weapon.nameSrank
+        result = result .. item.name .. " "
+        result = result .. item.weapon.nameSrank .. " "
 
         if item.weapon.grind > 0 then
             result = result .. item.weapon.grind .. " "

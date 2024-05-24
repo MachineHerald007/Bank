@@ -29,6 +29,7 @@ else
 	}
 end
 
+local lobby = 15
 local current_time = 0
 local update_delay = (options.updateThrottle * 1000)
 local last_inventory_index = -1
@@ -61,7 +62,7 @@ local function SaveOptions(options)
     end
 end
 
-function readFileToTable(file_path)
+function ReadFileToTable(file_path)
     local table = {}
     
     local file = io.open(file_path, "r")
@@ -89,7 +90,7 @@ local function ConnectInventory(save, index)
     end
 
     if not saved_inventory_file then
-        saved_inventory_file, err = readFileToTable(inventoryFilePath)
+        saved_inventory_file, err = ReadFileToTable(inventoryFilePath)
         if err then
             print("Error: ", err)
             print("No File Exists. Writing an inventory file")
@@ -124,7 +125,7 @@ local function ConnectInventory(save, index)
             io.output(file)
             io.write(cachedInventoryStr)
             io.close(file)
-            saved_inventory_file, err = readFileToTable(inventoryFilePath)
+            saved_inventory_file, err = ReadFileToTable(inventoryFilePath)
         end
     end
 end
@@ -136,7 +137,7 @@ local function ConnectBank(save)
     end
 
     if not saved_bank_file then
-        saved_bank_file, err = readFileToTable(bankFilePath)
+        saved_bank_file, err = ReadFileToTable(bankFilePath)
         if err then
             print("Error: ", err)
             print("No File Exists. Writing a bank file")
@@ -171,7 +172,7 @@ local function ConnectBank(save)
             io.output(file)
             io.write(cachedBankStr)
             io.close(file)
-            saved_bank_file, err = readFileToTable(bankFilePath)
+            saved_bank_file, err = ReadFileToTable(bankFilePath)
         end
     end
 end
@@ -181,10 +182,9 @@ function ConnectAddon()
     local playerAddr = pso.read_u32(_PlayerArray + 4 * playerIndex)
     local save = false
 
-    if playerAddr ~= 0 then
+    if playerAddr ~= 0 and lib_characters.GetCurrentFloorSelf() ~= lobby then
         ConnectInventory(save, lib_items.Me)
         ConnectBank(save)
-    else
     end
 end
 
