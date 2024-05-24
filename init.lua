@@ -8,7 +8,6 @@ local lib_items_list = require("solylib.items.items_list")
 local lib_items_cfg = require("solylib.items.items_configuration")
 local items = require("Bank Connector.items")
 local cfg = require("Bank Connector.configuration")
-local lib_theme_loaded, lib_theme = pcall(require, "Theme Editor.theme")
 
 -- options
 local optionsLoaded, options = pcall(require, "Bank Connector.options")
@@ -19,11 +18,13 @@ local ConfigurationWindow
 if optionsLoaded then
 	options.configurationEnableWindow = options.configurationEnableWindow == nil and true or options.configurationEnableWindow
 	options.enable = options.enable == nil and true or options.enable
+    options.Changed = options.Changed or false
 	options.updateThrottle = lib_helpers.NotNilOrDefault(options.updateThrottle, 0)
 else
 	options = {
 		configurationEnableWindow = true,
 		enable = true,
+        Changed = false,
 		updateThrottle = 0
 	}
 end
@@ -52,6 +53,7 @@ local function SaveOptions(options)
         io.write("return {\n")
         io.write(string.format("  configurationEnableWindow = %s,\n", tostring(options.configurationEnableWindow)))
         io.write(string.format("  enable = %s,\n", tostring(options.enable)))
+        io.write(string.format("  Changed = %s,\n", tostring(options.Changed)))
         io.write(string.format("  updateThrottle = %s,\n", tostring(options.updateThrottle)))
         io.write("}\n")
 
@@ -214,7 +216,7 @@ local function present()
 end
 
 local function init()
-	ConfigurationWindow = cfg.ConfigurationWindow(options)
+	ConfigurationWindow = cfg.ConfigurationWindow(options, false)
 
 	local function mainMenuButtonHandler()
 		ConfigurationWindow.open = not ConfigurationWindow.open

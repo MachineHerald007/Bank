@@ -12,8 +12,8 @@ local function ConfigurationWindow(configuration, customTheme)
 		local success
 
 		imgui.Text("General Settings")
-		if imgui.Checkbox("Enable", _configuration.EnableWindow) then
-			_configuration.EnableWindow = not _configuration.EnableWindow
+		if imgui.Checkbox("Enable", _configuration.enable) then
+			_configuration.enable = not _configuration.enable
 			this.changed = true
 		end
 
