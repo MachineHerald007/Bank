@@ -1,11 +1,8 @@
 -- imports
 local core_mainmenu = require("core_mainmenu")
 local lib_helpers = require("solylib.helpers")
-local lib_menu = require("solylib.menu")
 local lib_items = require("solylib.items.items")
 local lib_characters = require("solylib.characters")
-local lib_items_list = require("solylib.items.items_list")
-local lib_items_cfg = require("solylib.items.items_configuration")
 local items = require("Bank Connector.items")
 local cfg = require("Bank Connector.configuration")
 
