@@ -5,11 +5,6 @@ local lib_items = require("solylib.items.items")
 local lib_items_list = require("solylib.items.items_list")
 local lib_items_cfg = require("solylib.items.items_configuration")
 
-local bankDirectory        = "addons/Bank Connector/bank/"
-local inventoryDirectory   = "addons/Bank Connector/inventory/"
-local currentBankFile      = ""
-local currentInventoryFile = ""
-
 local function TrimString(text, length)
     -- default to "???" to prevent crashing for techniques when doing Alt+Backspace
     text = text or "???"
@@ -268,9 +263,8 @@ local function ProcessMeseta(item)
     return result
 end
 
-local function ProcessItem(item, floor, save, state)
+local function ProcessItem(item, floor)
 	floor = floor or false
-    save = save or false
     fromMagWindow = fromMagWindow or false
 
     local itemStr = ""
@@ -292,29 +286,7 @@ local function ProcessItem(item, floor, save, state)
         itemStr = ProcessMeseta(item)
     end
 
-    if save then
-        local directory = ""
-        local filename = ""
-        local currentFile = ""
-
-        if state == "Bank" then
-            directory = bankDirectory
-            filename = "saved_bank.txt"
-        end
-
-        if state == "Inventory" then
-            directory = inventoryDirectory
-            filename = "saved_inventory.txt"
-        end
-
-        currentFile = directory..filename
-        local file = io.open(currentFile, "a")
-        io.output(file)
-        io.write(itemStr .. "\n")
-        io.close(file)
-    else
-        return itemStr
-    end
+    return itemStr
 end
 
 local function ProcessInventory(index, state)

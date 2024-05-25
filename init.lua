@@ -36,7 +36,9 @@ local last_inventory_index = -1
 local last_inventory_time = 0
 local last_bank_time = 0
 local cache_inventory = nil
+local cachedInventoryStr = ""
 local cache_bank = nil
+local cachedBankStr = ""
 local saved_inventory_file = nil
 local saved_bank_file = nil
 
@@ -45,6 +47,16 @@ local inventoryFilePath = "addons/Bank Connector/inventory/saved_inventory.txt"
 
 local _PlayerArray = 0x00A94254
 local _PlayerIndex = 0x00A9C4F4
+
+local function Save(cache_str, file_path, callback)
+    local file = io.open(file_path, "a")
+    if file ~= nil then
+        io.output(file)
+        io.write(cache_str)
+        io.close(file)
+        callback()
+    end
+end
 
 local function SaveOptions(options)
     local file = io.open(optionsFileName, "w")
@@ -62,9 +74,7 @@ local function SaveOptions(options)
     end
 end
 
-function ReadFileToTable(file_path)
-    local table = {}
-    
+local function ReadFile(file_path)    
     local file = io.open(file_path, "r")
     if not file then
         return nil, "Could not open file"
@@ -72,17 +82,39 @@ function ReadFileToTable(file_path)
     
     local content = file:read("*all")
     file:close()
-    
-    -- Split the content by newline characters
-    for line in string.gmatch(content, "[^\r\n]+") do
-        table[#table + 1] = { line = line }
-    end
-    
-    return table
+    return content
 end
 
-local function ConnectInventory(index)
+local function GetCharacterData(playerAddr, type)
+    local character = {
+        name = lib_characters.GetPlayerName(playerAddr),
+        class = lib_characters.GetPlayerClass(playerAddr),
+        section_id = lib_characters.GetPlayerSectionID(playerAddr),
+        level = lib_characters.GetPlayerLevel(playerAddr)
+    }
+    local str = "[CHARACTER] \n"
+    local orderedKeys = {"name", "class", "section_id", "level"}
+    for _, key in ipairs(orderedKeys) do
+        str = str .. key .. ": " .. tostring(character[key]) .. "\n"
+    end
+    str = str .. "\n"
+    str = str .. "[" .. type .. "] \n"
+    return str
+end
+
+local function ParseCacheTable(cache)
+    local str = ""
+    local itemCount = table.getn(cache.items)
+    for i=1,itemCount,1 do
+        str = str .. items.ProcessItem(cache.items[i], false) .. "\n"
+    end
+    str = str .. "Meseta: " .. cache.meseta .. "\n"
+    return str
+end
+
+local function ConnectInventory(index, playerData)
     index = index or lib_items.Me
+    
     if current_time > last_bank_time + update_delay or last_inventory_index ~= index or cache_inventory == nil then
         cache_inventory = lib_items.GetInventory(index)
         last_inventory_index = index
@@ -90,89 +122,49 @@ local function ConnectInventory(index)
     end
 
     if not saved_inventory_file then
-        saved_inventory_file, err = ReadFileToTable(inventoryFilePath)
+        saved_inventory_file, err = ReadFile(inventoryFilePath)
         if err then
             print("Error: ", err)
             print("No File Exists. Writing an inventory file")
-            local itemCount = table.getn(cache_inventory.items)
-            for i=1,itemCount,1 do
-                items.ProcessItem(cache_inventory.items[i], false, true, "Inventory")
-            end
-
-            local item = {}
-            item.data = {0}
-            item.data[1] = 4
-            item.meseta = cache_inventory.meseta
-
-            items.ProcessItem(item, false, true, "Inventory")
+            cachedInventoryStr = playerData .. ParseCacheTable(cache_inventory)
+            Save(cachedInventoryStr, inventoryFilePath, function()
+                saved_inventory_file = ReadFile(inventoryFilePath)
+            end)
         end
     else
-        local savedInventoryStr = ""
-        local cachedInventoryStr = ""
-
-        for _, row in ipairs(saved_inventory_file) do
-            savedInventoryStr = savedInventoryStr..row.line.."\n"
-        end
-
-        local itemCount = table.getn(cache_inventory.items)
-        for i=1,itemCount,1 do
-            cachedInventoryStr = cachedInventoryStr..items.ProcessItem(cache_inventory.items[i], false, false, "Inventory").."\n"
-        end
-        cachedInventoryStr =  cachedInventoryStr.. "Meseta: "..cache_inventory.meseta.."\n"
-        if cachedInventoryStr ~= savedInventoryStr then
+        cachedInventoryStr = playerData .. ParseCacheTable(cache_inventory)
+        if cachedInventoryStr ~= saved_inventory_file then
             print("updating inventory file")
-            local file = io.open("addons/Bank Connector/inventory/saved_inventory.txt", "w+")
-            io.output(file)
-            io.write(cachedInventoryStr)
-            io.close(file)
-            saved_inventory_file, err = ReadFileToTable(inventoryFilePath)
+            Save(cachedInventoryStr, inventoryFilePath, function()
+                saved_inventory_file, err = ReadFile(inventoryFilePath)
+            end)
         end
     end
 end
 
-local function ConnectBank()
-    if  current_time > last_bank_time + update_delay or cache_bank == nil then
+local function ConnectBank(playerData)
+    if current_time > last_bank_time + update_delay or cache_bank == nil then
         cache_bank = lib_items.GetBank()
         last_bank_time = current_time
     end
 
     if not saved_bank_file then
-        saved_bank_file, err = ReadFileToTable(bankFilePath)
+        saved_bank_file, err = ReadFile(bankFilePath)
         if err then
             print("Error: ", err)
             print("No File Exists. Writing a bank file")
-            local itemCount = table.getn(cache_bank.items)
-            for i=1,itemCount,1 do
-                items.ProcessItem(cache_bank.items[i], false, true, "Bank")
-            end
-
-            local item = {}
-            item.data = {0}
-            item.data[1] = 4
-            item.meseta = cache_bank.meseta
-
-            items.ProcessItem(item, false, true, "Bank")
+            cachedBankStr = playerData .. ParseCacheTable(cache_bank)
+            Save(cachedBankStr, bankFilePath, function()
+                saved_bank_file, err = ReadFile(bankFilePath)
+            end)
         end
     else
-        local savedBankStr = ""
-        local cachedBankStr = ""
-
-        for _, row in ipairs(saved_bank_file) do
-            savedBankStr = savedBankStr..row.line.."\n"
-        end
-
-        local itemCount = table.getn(cache_bank.items)
-        for i=1,itemCount,1 do
-            cachedBankStr = cachedBankStr..items.ProcessItem(cache_bank.items[i], false, false, "Bank").."\n"
-        end
-        cachedBankStr =  cachedBankStr.. "Meseta: "..cache_bank.meseta.."\n"
-        if cachedBankStr ~= savedBankStr then
+        cachedBankStr = playerData .. ParseCacheTable(cache_bank)
+        if cachedBankStr ~= saved_bank_file then
             print("updating bank file")
-            local file = io.open("addons/Bank Connector/bank/saved_bank.txt", "w+")
-            io.output(file)
-            io.write(cachedBankStr)
-            io.close(file)
-            saved_bank_file, err = ReadFileToTable(bankFilePath)
+            Save(cachedBankStr, bankFilePath, function()
+                saved_bank_file, err = ReadFile(bankFilePath)
+            end)
         end
     end
 end
@@ -180,10 +172,11 @@ end
 function ConnectAddon()
     local playerIndex = pso.read_u32(_PlayerIndex)
     local playerAddr = pso.read_u32(_PlayerArray + 4 * playerIndex)
+    
 
     if playerAddr ~= 0 and lib_characters.GetCurrentFloorSelf() ~= lobby then
-        ConnectInventory(lib_items.Me)
-        ConnectBank()
+        ConnectInventory(lib_items.Me, GetCharacterData(playerAddr, "INVENTORY"))
+        ConnectBank(GetCharacterData(playerAddr, "BANK"))
     end
 end
 
