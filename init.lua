@@ -18,12 +18,12 @@ if optionsLoaded then
     options.Changed = options.Changed or false
     options.updateThrottle = lib_helpers.NotNilOrDefault(options.updateThrottle, 0)
 else
-	options = {
+    options = {
         configurationEnableWindow = true,
         enable = true,
         Changed = false,
         updateThrottle = 0
-	}
+    }
 end
 
 local lobby = 15
