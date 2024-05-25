@@ -49,7 +49,7 @@ local _PlayerArray = 0x00A94254
 local _PlayerIndex = 0x00A9C4F4
 
 local function Save(cache_str, file_path, callback)
-    local file = io.open(file_path, "a")
+    local file = io.open(file_path, "w+")
     if file ~= nil then
         io.output(file)
         io.write(cache_str)
