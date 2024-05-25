@@ -76,13 +76,13 @@ local function ReadFile(file_path)
     if not file then
         return nil, "Could not open file"
     end
-    
     local content = file:read("*all")
     file:close()
     return content
 end
 
 local function GetCharacterData(playerAddr, type)
+    local orderedKeys = {"name", "class", "section_id", "level"}
     local character = {
         name = lib_characters.GetPlayerName(playerAddr),
         class = lib_characters.GetPlayerClass(playerAddr),
@@ -90,7 +90,6 @@ local function GetCharacterData(playerAddr, type)
         level = lib_characters.GetPlayerLevel(playerAddr)
     }
     local str = "[CHARACTER] \n"
-    local orderedKeys = {"name", "class", "section_id", "level"}
     for _, key in ipairs(orderedKeys) do
         str = str .. key .. ": " .. tostring(character[key]) .. "\n"
     end
@@ -111,7 +110,7 @@ end
 
 local function ConnectInventory(index, playerData)
     index = index or lib_items.Me
-    
+
     if current_time > last_bank_time + update_delay or last_inventory_index ~= index or cache_inventory == nil then
         cache_inventory = lib_items.GetInventory(index)
         last_inventory_index = index
@@ -167,7 +166,7 @@ end
 function ConnectAddon()
     local playerIndex = pso.read_u32(_PlayerIndex)
     local playerAddr = pso.read_u32(_PlayerArray + 4 * playerIndex)
-    
+
     if playerAddr ~= 0 and lib_characters.GetCurrentFloorSelf() ~= lobby then
         ConnectInventory(lib_items.Me, GetCharacterData(playerAddr, "INVENTORY"))
         ConnectBank(GetCharacterData(playerAddr, "BANK"))
@@ -176,51 +175,51 @@ end
 
 -- config setup and drawing
 local function present()
-	if options.configurationEnableWindow then
-		ConfigurationWindow.open = true
-		options.configurationEnableWindow = false
-	end
+    if options.configurationEnableWindow then
+        ConfigurationWindow.open = true
+        options.configurationEnableWindow = false
+    end
 
-	ConfigurationWindow.Update()
-	if ConfigurationWindow.changed then
-		ConfigurationWindow.changed = false
-		SaveOptions(options)
-	end
+    ConfigurationWindow.Update()
+    if ConfigurationWindow.changed then
+        ConfigurationWindow.changed = false
+        SaveOptions(options)
+    end
 
-	--- Update timer for update throttle
-	current_time = pso.get_tick_count()
+    --- Update timer for update throttle
+    current_time = pso.get_tick_count()
 
-	if options.enable == false then
-		return
+    if options.enable == false then
+        return
     else
         ConnectAddon()
-	end
+    end
 
-	if firstPresent then
-		firstPresent = false
-	end
+    if firstPresent then
+        firstPresent = false
+    end
 end
 
 local function init()
-	ConfigurationWindow = cfg.ConfigurationWindow(options, false)
+    ConfigurationWindow = cfg.ConfigurationWindow(options, false)
 
-	local function mainMenuButtonHandler()
-		ConfigurationWindow.open = not ConfigurationWindow.open
-	end
+    local function mainMenuButtonHandler()
+        ConfigurationWindow.open = not ConfigurationWindow.open
+    end
 
-	core_mainmenu.add_button("Bank Connector", mainMenuButtonHandler)
+    core_mainmenu.add_button("Bank Connector", mainMenuButtonHandler)
 
-	return {
-		name = "Bank Connector",
-		version = "1.0.0",
-		author = "Machine Herald",
-		description = "Updates your banking info.",
-		present = present
-	}
+    return {
+        name = "Bank Connector",
+        version = "1.0.0",
+        author = "Machine Herald",
+        description = "Updates your banking info.",
+        present = present
+    }
 end
 
 return {
-	__addon = {
-		init = init
-	}
+    __addon = {
+        init = init
+    }
 }
