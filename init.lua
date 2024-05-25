@@ -13,10 +13,10 @@ local firstPresent = true
 local ConfigurationWindow
 
 if optionsLoaded then
-	options.configurationEnableWindow = options.configurationEnableWindow == nil and true or options.configurationEnableWindow
-	options.enable = options.enable == nil and true or options.enable
+    options.configurationEnableWindow = options.configurationEnableWindow == nil and true or options.configurationEnableWindow
+    options.enable = options.enable == nil and true or options.enable
     options.Changed = options.Changed or false
-	options.updateThrottle = lib_helpers.NotNilOrDefault(options.updateThrottle, 0)
+    options.updateThrottle = lib_helpers.NotNilOrDefault(options.updateThrottle, 0)
 else
 	options = {
 		configurationEnableWindow = true,

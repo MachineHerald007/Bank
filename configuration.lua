@@ -18,9 +18,9 @@ local function ConfigurationWindow(configuration, customTheme)
 		end
 
         success, _configuration.updateThrottle = imgui.InputInt("Update Throttle", _configuration.updateThrottle)
-		if success then
-			this.changed = true
-		end
+        if success then
+            this.changed = true
+        end
 	end
 
 	this.Update = function()
