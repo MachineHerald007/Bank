@@ -19,10 +19,10 @@ if optionsLoaded then
     options.updateThrottle = lib_helpers.NotNilOrDefault(options.updateThrottle, 0)
 else
 	options = {
-		configurationEnableWindow = true,
-		enable = true,
+        configurationEnableWindow = true,
+        enable = true,
         Changed = false,
-		updateThrottle = 0
+        updateThrottle = 0
 	}
 end
 
