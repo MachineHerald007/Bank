@@ -134,7 +134,6 @@ local function ConnectInventory(index, playerData)
     else
         cachedInventoryStr = playerData .. ParseCacheTable(cache_inventory)
         if cachedInventoryStr ~= saved_inventory_file then
-            print("updating inventory file")
             Save(cachedInventoryStr, inventoryFilePath, function()
                 saved_inventory_file, err = ReadFile(inventoryFilePath)
             end)
@@ -161,7 +160,6 @@ local function ConnectBank(playerData)
     else
         cachedBankStr = playerData .. ParseCacheTable(cache_bank)
         if cachedBankStr ~= saved_bank_file then
-            print("updating bank file")
             Save(cachedBankStr, bankFilePath, function()
                 saved_bank_file, err = ReadFile(bankFilePath)
             end)
@@ -173,7 +171,6 @@ function ConnectAddon()
     local playerIndex = pso.read_u32(_PlayerIndex)
     local playerAddr = pso.read_u32(_PlayerArray + 4 * playerIndex)
     
-
     if playerAddr ~= 0 and lib_characters.GetCurrentFloorSelf() ~= lobby then
         ConnectInventory(lib_items.Me, GetCharacterData(playerAddr, "INVENTORY"))
         ConnectBank(GetCharacterData(playerAddr, "BANK"))
